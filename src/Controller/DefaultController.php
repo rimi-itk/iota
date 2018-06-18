@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class DefaultController extends Controller
@@ -27,14 +28,37 @@ class DefaultController extends Controller
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $value = $form->getData()['value'];
+        $valueToBroadcast = null;
 
-            $this->addFlash('success', $translator->trans('Value set to %value%', ['%value%' => $value]));
+        if ($form->isSubmitted() && $form->isValid()) {
+            $valueToBroadcast = $form->getData()['value'];
+
+            $this->addFlash('success', $translator->trans('Value set to %value%', ['%value%' => $valueToBroadcast]));
         }
 
         return $this->render('default/index.html.twig', [
-          'form' => $form->createView(),
+            'form' => $form->createView(),
+            'value_to_broadcast' => $valueToBroadcast,
         ]);
+    }
+
+    public function broadcast(Request $request)
+    {
+        $value = $request->get('value');
+        $response = new StreamedResponse(null, 200, ['content-type' => 'text/plain']);
+        $response->setCallback(function () use ($value) {
+            echo 'Broadcasting value: '.$value, PHP_EOL;
+            ob_flush();
+            flush();
+            sleep(2);
+            echo 'Hello World', PHP_EOL;
+            ob_flush();
+            flush();
+            sleep(1);
+            echo 'Done', PHP_EOL;
+        });
+        $response->send();
+
+        return $response;
     }
 }
