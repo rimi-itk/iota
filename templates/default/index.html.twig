@@ -9,3 +9,7 @@
 		<iframe style="width: 100%; height: 30em;" src="{{ url('broadcast', {value: value_to_broadcast}) }}"></iframe>
 	{% endif %}
 {% endblock %}
+
+{% block javascripts %}
+  <script src="{{ asset('build/app.js') }}"></script>
+{% endblock %}
