@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ruleset name="dokk1gh">
+    <description>PHP CodeSniffer configuration</description>
+
+    <file>src/</file>
+
+    <rule ref="vendor/squizlabs/php_codesniffer/src/Standards/PSR2"/>
+</ruleset>
