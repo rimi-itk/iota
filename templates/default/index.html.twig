@@ -1,23 +1,23 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-	{{ form_start(form) }}
-		{{ form_widget(form) }}
-	{{ form_end(form) }}
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+    {{ form_end(form) }}
 
-	{% if (value_to_broadcast|default(false)) %}
-		<form id="broadcast_form" method="post" action="{{ url('broadcast') }}" target="broadcast">
-			<input type="hidden" name="value" value="{{ value_to_broadcast }}"/>
-		</form>
+    {% if (value_to_broadcast|default(false)) %}
+        <form id="broadcast_form" method="post" action="{{ url('broadcast') }}" target="broadcast">
+            <input type="hidden" name="value" value="{{ value_to_broadcast }}"/>
+        </form>
 
-		<iframe id="broadcast" name="broadcast" src="about:blank"></iframe>
-	{% endif %}
+        <iframe id="broadcast" name="broadcast" src="about:blank"></iframe>
+    {% endif %}
 {% endblock %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="{{ asset('build/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/app.css') }}">
 {% endblock %}
 
 {% block javascripts %}
-  <script src="{{ asset('build/app.js') }}"></script>
+    <script src="{{ asset('build/app.js') }}"></script>
 {% endblock %}
