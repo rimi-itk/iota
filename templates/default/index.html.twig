@@ -6,8 +6,16 @@
 	{{ form_end(form) }}
 
 	{% if (value_to_broadcast|default(false)) %}
-		<iframe style="width: 100%; height: 30em;" src="{{ url('broadcast', {value: value_to_broadcast}) }}"></iframe>
+		<form id="broadcast_form" method="post" action="{{ url('broadcast') }}" target="broadcast">
+			<input type="hidden" name="value" value="{{ value_to_broadcast }}"/>
+		</form>
+
+		<iframe id="broadcast" name="broadcast" src="about:blank"></iframe>
 	{% endif %}
+{% endblock %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{ asset('build/app.css') }}">
 {% endblock %}
 
 {% block javascripts %}

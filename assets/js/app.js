@@ -12,4 +12,6 @@ $(document).ready(() => {
 
 		update();
 		$handle.on('input', update);
+
+		$('#broadcast_form').submit();
 })

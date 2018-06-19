@@ -5,13 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<link rel="stylesheet" href="{{ asset('build/app.css') }}">
+    {% block stylesheets %}{% endblock %}
 
     <title>Ι</title>
   </head>
   <body>
     {% block container %}
-			<div class="container-fluid">
+			<div role="main" class="container-fluid">
 				{% block messages %}
 					{% for label, messages in app.flashes %}
 						{% for message in messages %}

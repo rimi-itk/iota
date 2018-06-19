@@ -1,7 +1,3 @@
-index:
-    path: /
-    controller: App\Controller\DefaultController::index
-
-broadcast:
-    path: /broadcast
-    controller: App\Controller\DefaultController::broadcast
+# index:
+#     path: /
+#     controller: App\Controller\DefaultController::index

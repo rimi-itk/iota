@@ -1,0 +1,8 @@
+@import '~bootstrap/scss/bootstrap';
+
+th, td {
+	&.createdAt {
+		white-space: nowrap;
+		width: 20em;
+	}
+}

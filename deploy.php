@@ -48,5 +48,4 @@ after('deploy:update_code', 'deploy:assets');
 after('deploy:failed', 'deploy:unlock');
 
 // Migrate database before symlink new release.
-
-// before('deploy:symlink', 'database:migrate');
+before('deploy:symlink', 'database:migrate');
