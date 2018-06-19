@@ -11,8 +11,6 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\RangeType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -29,22 +27,6 @@ class DefaultController extends Controller
      */
     public function index(Request $request, TranslatorInterface $translator)
     {
-        $form = $this->createFormBuilder()
-          ->add('value', RangeType::class)
-          ->add('broadcast', SubmitType::class, ['label' => 'Broadcast'])
-          ->getForm();
-
-        $form->handleRequest($request);
-
-        $valueToBroadcast = null;
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $valueToBroadcast = $form->getData()['value'];
-        }
-
-        return $this->render('default/index.html.twig', [
-            'form' => $form->createView(),
-            'value_to_broadcast' => $valueToBroadcast,
-        ]);
+        return $this->redirectToRoute('broadcast');
     }
 }
