@@ -1,7 +1,7 @@
 require('../css/app.scss');
 
 var $ = require('jquery');
-require('bootstrap-sass');
+require('bootstrap');
 
 $(document).ready(() => {
 		var $handle = $('#form_value'),

@@ -7,7 +7,15 @@ composer install
 yarn install
 ```
 
-Building assets:
+## Building assets
+
+For development:
+
+```sh
+yarn run encore dev --watch
+```
+
+For production:
 
 ```sh
 yarn run encore production
