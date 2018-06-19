@@ -5,16 +5,7 @@
         {{ form_widget(form) }}
     {{ form_end(form) }}
 
-{#
-    {% if (value_to_broadcast|default(false)) %}
-        <form id="broadcast_form" method="post" action="{{ url('broadcast') }}" target="broadcast">
-            <input type="hidden" name="value" value="{{ value_to_broadcast }}"/>
-        </form>
-
-    {% endif %}
-    #}
     <iframe id="broadcast" name="broadcast" src="about:blank"></iframe>
-
 {% endblock %}
 
 {% block stylesheets %}

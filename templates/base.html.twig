@@ -25,6 +25,9 @@
                         <a class="nav-link" href="{{ path('item_index') }}">Data</a>
                     </li>
                 </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>{{ 'Version %version%'|trans({'%version%': app_version}) }}</li>
+                </ul>
             </div>
         </nav>
 
