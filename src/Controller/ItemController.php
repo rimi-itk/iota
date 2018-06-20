@@ -57,10 +57,8 @@ class ItemController extends Controller
         if (null === $data) {
             throw new BadRequestHttpException('Data must be a non-null json object');
         }
-        $item = new Item();
-        $item
-            ->setCreatedAt(new \DateTime())
-            ->setData($data);
+        $item = new Item('incoming');
+        $item->setData($data);
         $entityManager->persist($item);
         $entityManager->flush();
 

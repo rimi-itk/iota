@@ -30,9 +30,20 @@ class Item
     private $createdAt;
 
     /**
+     * @ORM\Column(type="string")
+     */
+    private $type;
+
+    /**
      * @ORM\Column(type="json")
      */
     private $data;
+
+    public function __construct(string $type)
+    {
+        $this->createdAt = new \DateTime();
+        $this->type = $type;
+    }
 
     public function getId()
     {
@@ -47,6 +58,18 @@ class Item
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function setType($type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

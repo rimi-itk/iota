@@ -10,12 +10,22 @@
 
 namespace App\Loriot;
 
+use App\Entity\Item;
 use App\Loriot\Exception\LoriotException;
+use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 
 class Loriot extends AbstractLoriot
 {
+    /** @var EntityManagerInterface */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     public function sendDimmingLevel($dimmingLevel, $eui, $port = 1)
     {
         $this->validateEUI($eui);
@@ -38,6 +48,11 @@ class Loriot extends AbstractLoriot
             'confirmed' => true,
             'data' => $data,
         ];
+
+        $item = new Item(__METHOD__);
+        $item->setData(['message' => $message]);
+        $this->entityManager->persist($item);
+        $this->entityManager->flush();
 
         try {
             $client = new Client();
