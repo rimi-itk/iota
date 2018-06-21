@@ -26,7 +26,7 @@ class Loriot extends AbstractLoriot
         $this->entityManager = $entityManager;
     }
 
-    public function sendDimmingLevel($dimmingLevel, $eui, $port = 1)
+    public function sendDimmingLevel($dimmingLevel, $eui, $port = 60)
     {
         $this->validateEUI($eui);
         if (0 <= $dimmingLevel && $dimmingLevel <= 1) {
@@ -49,6 +49,11 @@ class Loriot extends AbstractLoriot
             'data' => $data,
         ];
 
+        return $this->sendMessage($message);
+    }
+
+    public function sendMessage(array $message)
+    {
         $item = new Item(__METHOD__);
         $item->setData(['message' => $message]);
         $this->entityManager->persist($item);

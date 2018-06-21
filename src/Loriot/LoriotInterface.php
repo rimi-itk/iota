@@ -26,6 +26,8 @@ interface LoriotInterface
      */
     public function validateEUI($eui);
 
+    public function sendMessage(array $message);
+
     /**
      * @param $dimmingLevel
      * @param $eui
