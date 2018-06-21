@@ -32,13 +32,13 @@ task('build', function () {
 });
 
 task('build:assets', function() {
-	// Deploy built assets.
-	run('yarn run encore production');
+    // Build assets for production.
+    run('yarn run encore production');
 })->local();
 
 task('deploy:assets', function() {
-	// Deploy built assets.
-	upload('public/build/', '{{release_path}}/public/build/');
+    // Deploy built assets.
+    upload('public/build/', '{{release_path}}/public/build/');
 });
 
 after('deploy:update_code', 'build:assets');
