@@ -14,4 +14,8 @@ $(document).ready(() => {
 		$handle.on('input', update);
 
 		$('#broadcast_form').submit();
+
+    $('[data-form-eui]').on('click', (event) => {
+        $('#form_eui').val($(event.target).data('form-eui'));
+    });
 })

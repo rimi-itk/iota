@@ -83,12 +83,16 @@ class BroadcastController extends Controller
     {
         $form = $this->createFormBuilder()
             ->add('value', RangeType::class, [
+                'label' => 'Dimming level',
                 'required' => true,
             ])
             ->add('eui', TextType::class, [
+                'label' => 'Device EUI',
                 'required' => true,
             ])
-            ->add('broadcast', SubmitType::class, ['label' => 'Broadcast'])
+            ->add('broadcast', SubmitType::class, [
+                'label' => 'Send',
+            ])
             ->getForm();
 
         return $form;
