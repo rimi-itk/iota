@@ -11,22 +11,17 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class DefaultController extends Controller
 {
     /**
      * @Route("/", name="frontpage")
      *
-     * @param Request             $request
-     * @param TranslatorInterface $translator
-     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function index(Request $request, TranslatorInterface $translator)
+    public function index()
     {
-        return $this->redirectToRoute('broadcast');
+        return $this->redirectToRoute('dashboard');
     }
 }
