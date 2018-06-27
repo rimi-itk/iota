@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1 id="decode-message">Decode message</h1>
+
+    {{ form_start(form) }}
+        {% for text, data in {
+            'fPort 24': {message: '28 E2 9B 59 01 8E 04 16 FE 1E 32 02 2A FE E1 32', port: 24},
+            'fPort 99': {message: '00 1a 00 1a 4d 00 05 7f 94 14 71 38 07 20', port: 99},
+            'fPort 99 (from documentation)': {message: '00 FF 00 10 47 00 04 05 C3 14 41 59 05 00', port: 99},
+            } %}
+            <button type="button" class="btn btn-sm" data-data="{{ data|json_encode }}">{{ text }}</button>
+        {% endfor %}
+    {{ form_end(form) }}
+
+
+    {% if result|default(null) %}
+        <fieldset>
+            <legend>Result</legend>
+
+            <pre>{{ result|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+        </fieldset>
+    {% endif %}
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('build/message.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('build/message.js') }}"></script>
+{% endblock %}

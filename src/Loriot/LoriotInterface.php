@@ -28,6 +28,8 @@ interface LoriotInterface
 
     public function sendMessage(array $message);
 
+    public function setStatusReporting(int $interval, string $eui);
+
     /**
      * @param $dimmingLevel
      * @param $eui
@@ -37,5 +39,5 @@ interface LoriotInterface
      *
      * @return string
      */
-    public function sendDimmingLevel($dimmingLevel, $eui, $port = 1);
+    public function sendDimmingLevel($dimmingLevel, string $eui);
 }

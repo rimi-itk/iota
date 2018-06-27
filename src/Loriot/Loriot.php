@@ -31,8 +31,9 @@ class Loriot extends AbstractLoriot
         $this->parameters = $parameters;
     }
 
-    public function sendDimmingLevel($dimmingLevel, $eui, $port = 60)
+    public function sendDimmingLevel($dimmingLevel, string $eui)
     {
+        $port = 60;
         $this->validateEUI($eui);
         if (0 <= $dimmingLevel && $dimmingLevel <= 1) {
             $dimmingLevel = (int) (100 * $dimmingLevel);
@@ -43,18 +44,43 @@ class Loriot extends AbstractLoriot
 
         $header = 0x01;
         $address = 0xFE;
-        $bytes = pack('C*', $header, $address, $dimmingLevel);
-        $data = bin2hex($bytes);
+        $bytes = [$header, $address, $dimmingLevel];
 
         $message = [
             'cmd' => 'tx',
             'EUI' => $eui,
             'port' => $port,
             'confirmed' => true,
-            'data' => $data,
+            'data' => $this->toHex($bytes),
         ];
 
         return $this->sendMessage($message);
+    }
+
+    public function setStatusReporting(int $interval, string $eui)
+    {
+        $port = 50;
+        $this->validateEUI($eui);
+
+        $header = 0x07;
+        $payload = [
+            ($interval >> 000) & 0xFF,
+            ($interval >> 010) & 0xFF,
+            ($interval >> 020) & 0xFF,
+            ($interval >> 030) & 0xFF,
+        ];
+
+        $bytes = array_merge([$header], $payload);
+
+        $message = [
+            'cmd' => 'tx',
+            'EUI' => $eui,
+            'port' => $port,
+            'confirmed' => true,
+            'data' => $this->toHex($bytes),
+        ];
+
+        $this->sendMessage($message);
     }
 
     public function sendMessage(array $message)
@@ -86,7 +112,7 @@ class Loriot extends AbstractLoriot
 
     public function decodeMessage(string $message, int $port)
     {
-        $bytes = pack('H*', preg_replace('/\s+/', '', $message));
+        $bytes = array_map('ord', str_split(pack('H*', preg_replace('/\s+/', '', $message))));
 
         switch ($port) {
             case 24:
@@ -102,7 +128,7 @@ class Loriot extends AbstractLoriot
                         'Relay 2' => false,
                     ];
 
-                    $value = ord($byte);
+                    $value = $byte;
                     foreach ($statuses as $status => &$active) {
                         $active = 1 === ($value & 0x1);
                         $value >>= 1;
@@ -123,7 +149,7 @@ class Loriot extends AbstractLoriot
                         'Sunday' => false,
                     ];
 
-                    $value = ord($byte);
+                    $value = $byte;
                     foreach ($days as $day => &$active) {
                         $active = 1 === ($value & 0x1) ? 'active' : 'not active';
                         $value >>= 1;
@@ -134,25 +160,17 @@ class Loriot extends AbstractLoriot
 
                 // Is this correct?
                 $offset = (0xFF === $bytes[0]) ? 1 : 0;
-                $timestamp = 0;
-                for ($i = 3 + $offset; $i >= 0 + $offset; --$i) {
-                    $timestamp <<= 8;
-                    $timestamp |= ord($bytes[$i]);
-                }
-                $time = new \DateTime();
-                $time->setTimestamp($timestamp);
-
+                $time = $this->getTime(array_slice($bytes, $offset, 4));
                 $status = $getStatus($bytes[4 + $offset]);
+                $rssi = $bytes[5 + $offset];
 
-                $rssi = ord($bytes[5 + $offset]);
-
-                $stuff = substr($bytes, 6 + $offset, 5);
+                $stuff = array_slice($bytes, 6 + $offset, 5);
                 $profile[0] = [
-                    'id' => ord($stuff[0]),
-                    'sequence' => ord($stuff[1]),
-                    'address' => ord($stuff[2]),
+                    'id' => $stuff[0],
+                    'sequence' => $stuff[1],
+                    'address' => $stuff[2],
                     'day' => $getDays($stuff[3]),
-                    'current light dim level' => ord($stuff[4]),
+                    'current light dim level' => $stuff[4],
                 ];
 
                 return [
@@ -162,15 +180,91 @@ class Loriot extends AbstractLoriot
                     'profile' => $profile,
                 ];
 
+            case 99:
+                switch ($bytes[0]) {
+                    case 0x00:
+                        return [
+                            'header' => 'boot',
+                            'serial' => $this->formatHex(array_slice($bytes, 1, 4)),
+                            'firmware' => [
+                                'major' => $this->formatDecimal(array_slice($bytes, 5, 1)),
+                                'minor' => $this->formatDecimal(array_slice($bytes, 6, 1)),
+                                'patch' => $this->formatDecimal(array_slice($bytes, 7, 1)),
+                            ],
+                            'clock' => $this->getTime(array_slice($bytes, 8, 4)),
+                            'hardware' => [
+                                'hw' => $bytes[12],
+                                'opt' => $bytes[13],
+                            ],
+                        ];
+
+                    case 0x01:
+                        return [
+                            'header' => 'shutdown',
+                        ];
+
+                    case 0x10:
+                        return [
+                            'header' => 'error code',
+                            'error' => $this->formatHex($bytes[1]),
+                        ];
+                }
+
+                throw new \RuntimeException('Invalid message: '.$this->formatHex($bytes));
             case 25:
             case 50:
             case 51:
             case 60:
-            case 99:
             default:
                 throw new \RuntimeException('Invalid port: '.$port);
 
             break;
         }
+    }
+
+    private function toHex(array $bytes)
+    {
+        return bin2hex(pack('C*', ...$bytes));
+    }
+
+    private function formatHex($bytes, $flip = false)
+    {
+        if (!is_array($bytes)) {
+            $bytes = [$bytes];
+        }
+        if ($flip) {
+            $bytes = array_reverse($bytes);
+        }
+
+        return implode(' ', array_map(function ($byte) {
+            return sprintf('%02X', $byte);
+        }, $bytes));
+    }
+
+    private function formatDecimal($bytes, $flip = false)
+    {
+        if (!is_array($bytes)) {
+            $bytes = [$bytes];
+        }
+        if ($flip) {
+            $bytes = array_reverse($bytes);
+        }
+
+        return implode(' ', array_map(function ($byte) {
+            return sprintf('%d', $byte);
+        }, $bytes));
+    }
+
+    private function getTime(array $bytes)
+    {
+        $timestamp = 0;
+        for ($i = count($bytes) - 1; $i >= 0; --$i) {
+            $timestamp <<= 8;
+            $timestamp |= $bytes[$i];
+        }
+        $time = new \DateTime();
+        $time->setTimestamp($timestamp);
+
+        return $time;
     }
 }

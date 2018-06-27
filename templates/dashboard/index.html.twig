@@ -5,27 +5,16 @@
         <h1>Set dimming level</h1>
 
         {{ form_start(form, {attr: { target: 'broadcast' }}) }}
-            {{ form_row(form.value) }}
-            {{ form_row(form.eui) }}
-
-            {% for eui, label in {
-                "70B3D5B0200365A8": 'Lygtepæl 1',
-                "70B3D5B0200365A5": 'Lygtepæl 2',
-                "70B3D5B0200365A6": 'Lygtepæl 3',
+            {% for text, data in {
+                'Lygtepæl 1': {eui: '70B3D5B0200365A8'},
+                'Lygtepæl 2': {eui: '70B3D5B0200365A5'},
+                'Lygtepæl 3': {eui: '70B3D5B0200365A6'}
                 } %}
-                <button type="button" class="btn btn-sm" data-eui="{{ eui }}">{{ label }}</button>
+                <button type="button" class="btn btn-sm" data-data="{{ data|json_encode }}">{{ text }}</button>
             {% endfor %}
         {{ form_end(form) }}
 
         <iframe name="broadcast" src="about:blank"></iframe>
-    </section>
-
-    <section id="decode-message">
-        <h1 id="decode-message">Decode message</h1>
-
-        {{ form(decode_message_form, {attr: { target: 'decode_message' }}) }}
-
-        <iframe name="decode_message" src="about:blank"></iframe>
     </section>
 {% endblock %}
 
