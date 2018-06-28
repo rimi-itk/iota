@@ -75,11 +75,16 @@ class MessageController extends Controller
         ]);
     }
 
+    /**
+     * @return \Symfony\Component\Form\FormInterface
+     */
     private function createDecodeForm()
     {
         $ports = ['', 24, 25, 50, 51, 60, 99];
 
-        $form = $this->createFormBuilder(null, ['attr' => ['id' => 'decode_message']])
+        $form = $this->createFormBuilder(null, [
+            'csrf_protection' => false,
+        ])
             ->setMethod('GET')
             ->setAction($this->generateUrl('message_decode'))
             ->add('message', TextareaType::class, [

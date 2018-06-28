@@ -6,13 +6,19 @@
             <th class="createdAt">{{ 'Created at'|trans }}</th>
             <th>{{ 'Type'|trans }}</th>
             <th>{{ 'Value'|trans }}</th>
+            <th/>
         </thead>
         <tbody>
             {% for item in items %}
                 <tr>
-                    <td class="createdAt">{{ item.createdAt|date('Y-m-d H:i:s') }}</td>
+                    <td class="createdAt">{{ item.createdAt|date('Y-m-d H:i:sP') }}</td>
                     <td>{{ item.type }}</td>
-                    <td><div data-json="{{ item.data|json_encode }}">{{ item.data|json_encode }}</div></td>
+                    <td><div class="formatted json" data-json="{{ item.data|json_encode }}">{{ item.data|json_encode(constant('JSON_PRETTY_PRINT')) }}</div></td>
+                    <td>
+                        {% if item.type == 'incoming' and item.data.data|default(null) and item.data.port|default(null) %}
+                            <a class="btn btn-light" href="{{ path('message_decode', {form: {message: item.data.data, port: item.data.port}}) }}" target="decodemessage">{{ 'Decode message'|trans }}</a>
+                        {% endif %}
+                    </td>
                 </tr>
             {%  endfor %}
         </tbody>

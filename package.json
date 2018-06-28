@@ -15,7 +15,5 @@
         "watch": "encore dev --watch",
         "build": "encore production"
     },
-    "dependencies": {
-        "json-formatter-js": "^2.2.0"
-    }
+    "dependencies": {}
 }

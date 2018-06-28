@@ -2,7 +2,12 @@
 
 th, td {
 	&.createdAt {
-		white-space: nowrap;
-		width: 20em;
+		width: 10em;
 	}
+}
+
+.formatted {
+    white-space: pre;
+    max-height: 20em;
+    overflow: auto;
 }

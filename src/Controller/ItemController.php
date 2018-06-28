@@ -36,9 +36,10 @@ class ItemController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function index(ItemRepository $itemRepository)
+    public function index(Request $request, ItemRepository $itemRepository)
     {
-        $items = $itemRepository->findBy([], ['createdAt' => Criteria::DESC]);
+        $limit = $request->get('limit', 87);
+        $items = $itemRepository->findBy([], ['createdAt' => Criteria::DESC], $limit);
 
         return $this->render('item/index.html.twig', [
             'items' => $items,
